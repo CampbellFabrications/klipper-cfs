@@ -7,6 +7,8 @@ used for communication over RS485.
 """
 
 import enum
+import serial
+import serial.rs485
 from functools import singledispatch
 from dataclasses import dataclass, field, fields
 from typing import TYPE_CHECKING
@@ -372,3 +374,31 @@ class MessageBlock(CRC8Structure):
         return (
             f"<MSGBlock: payload={b''.join(map(force_to_bytes, self.payload)).hex()}>"
         )
+
+
+class CFSBase:
+    def __init__(self, serial_port):
+        self.serial_port = serial.Serial(serial_port, baudrate=230400)
+        self.serial_port.rs485_mode = serial.rs485.RS485Settings()
+
+    def __enter__(self):
+        self.serial_port.open()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.serial_port.close()
+
+
+
+class CFSWrapper:
+    def __init__(self, config):
+        self.printer = config.get_printer()
+        self.gcode = self.printer.lookup_object("gcode")
+        self.mutex = self.printer.get_reactor().mutex()
+
+        # self.printer.register_event_handler("klippy:shutdown", self._handle_shutdown)
+        # self.printer.register_event_handler("klippy:disconnect", self._handle_disconnect)
+
+
+def load_config_prefix(config):
+    return CFSWrapper(config)
