@@ -416,7 +416,7 @@ class BoxCfg:
 
         # Version Control
         self.version = config.getint("version", default=1)
-        # self.logger.info(f"BoxCfg using version {self.version} as per original [box]")
+        self.logger.info(f"BoxCfg using version {self.version} as per original [box]")
         level = config.get('log_level', 'error').upper()
         self.logger.setLevel(getattr(logging, level, logging.ERROR))
 

@@ -532,7 +532,7 @@ class GCodeMove:
                 logging.info("power_loss cmd_CX_RESTORE_GCODE_STATE toolhead.set_position:%s" % str([x, y, z+offset_value, self.last_position[3]]))
                 toolhead.set_position([x, y, z+offset_value, self.last_position[3]], homing_axes=(2,))
             speed = self.speed
-            self.last_position[:3] = state['lastgit_position'][:3]
+            self.last_position[:3] = state['last_position'][:3]
             #box = self.printer.lookup_object("box", None)
             #if box:
             #    data = {}
